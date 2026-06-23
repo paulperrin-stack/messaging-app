@@ -1,15 +1,8 @@
 # messaging-app
 
-REST API for private messaging between users, with persistent conversation history and a React frontend.
+A REST API for private messaging between users, with a minimal React frontend for local development.
 
-## Screenshots
-
-![Backend](./docs/screenshot-postman.png)
-
-## Stack
-
-**Backend:** Node.js · Express 5 · PostgreSQL (Neon) · Prisma · JWT · Passport.js · bcrypt  
-**Frontend:** React 19 · Vite
+**API:** https://messaging-app-4ug1.onrender.com
 
 ## Features
 
@@ -17,74 +10,93 @@ REST API for private messaging between users, with persistent conversation histo
 - Private conversations between any two users
 - Persistent message history stored in PostgreSQL
 - List all users to start a new conversation
-- Update your own profile
+- Update your own profile (display name, bio, avatar)
 - Clean REST API design with protected routes
 
-## Structure
+## Tech stack
+
+**Backend:** Node.js · Express 5 · PostgreSQL (Neon) · Prisma · Passport JWT · bcrypt  
+**Frontend:** React 19 · Vite *(local development only)*
+
+## Project structure
 
 ```
 messaging-app/
-├── backend/    # Express REST API + Prisma + PostgreSQL
-└── frontend/   # React client (Vite)
+├── backend/    Express REST API + Prisma + PostgreSQL
+└── frontend/   React client (Vite) — run locally against the API
 ```
 
-## API Endpoints
+## Getting started
 
-### Auth
+### Prerequisites
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | /api/auth/register | — | Create account |
-| POST | /api/auth/login | — | Returns JWT token |
+- Node.js 20+
+- A PostgreSQL database (e.g. [Neon](https://neon.tech) free tier)
 
-### Users
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | /api/users | Required | List all users |
-| GET | /api/users/:id | Required | Get user profile |
-| PUT | /api/users/:id | Required (own) | Update own profile |
-
-### Messages
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | /api/messages/:userId | Required | Get conversation with a user |
-| POST | /api/messages/:userId | Required | Send a message to a user |
-
-## Run locally
+### Backend
 
 ```bash
-git clone https://github.com/paulperrin-stack/messaging-app
-cd messaging-app/backend
-cp .env.example .env   # add DATABASE_URL and JWT_SECRET
+cd backend
 npm install
+cp .env.example .env      # fill in the values below
 npx prisma generate
-npx prisma migrate dev
-node src/app.js
-```
-
-In a second terminal:
-
-```bash
-cd messaging-app/frontend
-cp .env.example .env   # add VITE_API_URL=http://localhost:3000/api
-npm install
+npx prisma migrate deploy
 npm run dev
 ```
 
-## Environment variables
+`backend/.env`:
 
-**backend/.env.example**
+| Variable       | Description                              |
+| -------------- | ---------------------------------------- |
+| `DATABASE_URL` | PostgreSQL connection string             |
+| `JWT_SECRET`   | Any long random string                   |
+| `PORT`         | API port (default: 3000)                 |
 
-```dotenv
-DATABASE_URL=       # PostgreSQL connection string (e.g. Neon)
-JWT_SECRET=         # Any long random string
-PORT=3000           # Default: 3000
+### Frontend
+
+```bash
+cd frontend
+npm install
+echo "VITE_API_URL=http://localhost:3000/api" > .env
+npm run dev
 ```
 
-**frontend/.env.example**
+The app runs at `http://localhost:5173`.
 
-```dotenv
-VITE_API_URL=       # e.g. http://localhost:3000/api
-```
+## API endpoints
+
+### Auth
+
+| Method | Path                  | Auth     | Description              |
+| ------ | --------------------- | -------- | ------------------------ |
+| POST   | `/api/auth/register`  | —        | Create account           |
+| POST   | `/api/auth/login`     | —        | Returns JWT token        |
+
+### Users
+
+| Method | Path               | Auth     | Description              |
+| ------ | ------------------ | -------- | ------------------------ |
+| GET    | `/api/users`       | Required | List all users           |
+| GET    | `/api/users/:id`   | Required | Get user profile         |
+| PUT    | `/api/users/:id`   | Required (own) | Update own profile |
+
+### Messages
+
+| Method | Path                      | Auth     | Description                    |
+| ------ | ------------------------- | -------- | ------------------------------ |
+| GET    | `/api/messages/:userId`   | Required | Get conversation with a user   |
+| POST   | `/api/messages/:userId`   | Required | Send a message to a user       |
+
+All endpoints except `/api/auth/register` and `/api/auth/login` require a `Bearer` token in the `Authorization` header.
+
+## Deployment
+
+The backend deploys to [Render](https://render.com) (free tier) with [Neon](https://neon.tech) as the PostgreSQL database.
+
+> The Render free tier spins down after 15 minutes of inactivity. The first request after a period of inactivity may take 30–60 seconds to respond.
+
+The frontend is not deployed — run it locally against the live API by setting `VITE_API_URL` to your Render backend URL.
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
