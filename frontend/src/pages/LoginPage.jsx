@@ -30,7 +30,7 @@ export default function LoginPage() {
                 <button type='submit'>{mode === 'login' ? 'Sign in' : 'Register'}</button>
             </form>
             <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
-                {mode === 'login' ? 'Need an account? Register' : 'HAve an account? Sign in'}
+                {mode === 'login' ? 'Need an account? Register' : 'Have an account? Sign in'}
             </button>
         </div>
     );
